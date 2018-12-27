@@ -1,5 +1,5 @@
-# SafeTradeBot
-Discord trade data bot for Safe.Trade
+# SafeBot
+Discord Safecoin Bot
 
 Requires Python >= 3.6
 
