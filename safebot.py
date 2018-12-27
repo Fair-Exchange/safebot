@@ -51,7 +51,7 @@ class Bot(discord.Client):
         print('------')
 
     async def on_message(self, message):
-        if isinstance(message.channel, discord.DMChannel) or message.channel.name in ('test', 'safetrade', 'bot-commands', "bots"):
+        if isinstance(message.channel, discord.DMChannel) or message.channel.name in ('pools', 'bot-commands'):
             if message.content and message.content.startswith(self.prefix):
                 command = message.content.split()[0][1:].lower()
                 if command == "help":
