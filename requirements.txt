@@ -1,2 +1,4 @@
 https://github.com/Rapptz/discord.py/archive/rewrite.zip
 yarl<1.2
+requests
+bs4
