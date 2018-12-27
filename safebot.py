@@ -33,6 +33,11 @@ class Bot(discord.Client):
         "http://safecoinpool.club/": lambda: requests.get("http://safecoinpool.club/api/stats").json()["pools"]["safecoin"]["hashrate"]*2/10**6,
     }
     pools_stat = {}
+    blocks = 0
+    difficulty = 0
+    hashrate = 0
+    last_pool_update = datetime.datetime.fromtimestamp(0)
+    last_hashrate_update = datetime.datetime.fromtimestamp(0)
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
