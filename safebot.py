@@ -119,7 +119,7 @@ class Bot(discord.Client):
 
     def nethash(self, text, embed):
         embed.set_footer(text=f"Last update: {self.last_hashrate_update.ctime()}")
-        f"Current network hash is **{normalize_hashrate(self.hashrate)}**"
+        return f"Current network hash is **{normalize_hashrate(self.hashrate)}**"
 
     def blockreward(self, text, embed):
         return f"Current block reward is **{getblockreward():.0f} SAFE**"
