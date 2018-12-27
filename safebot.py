@@ -125,6 +125,8 @@ class Bot(discord.Client):
         return f"Current block reward is **{getblockreward():.0f} SAFE**"
 
     def hashpower(self, text, embed):
+        if not text or text.isspace():
+            return f"**Usage:** *{self.prefix}hashpower <hashrate>*"
         try:
             hashrate = float(text)
         except ValueError:
