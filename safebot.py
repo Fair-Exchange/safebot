@@ -94,10 +94,8 @@ class Bot(discord.Client):
         await self.wait_until_ready()
         while not self.is_closed():
             i = getmininginfo()
-            print(i)
             hashrate = i.get("networkhashps")
             if not hashrate is None:
-                print("Done")
                 self.blocks = i.get("blocks")
                 self.difficulty = i.get("difficulty")
                 self.hashrate = hashrate
