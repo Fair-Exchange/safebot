@@ -110,8 +110,43 @@ class Bot(discord.Client):
         return f"Current block is **{self.blocks}**"
 
     def halve(self, text, embed):
+        schedule = [
+            [64, 175375],
+            [55, 178375],
+            [48, 181375],
+            [40, 184375],
+            [32, 187375],
+            [28, 197375],
+            [24, 207375],
+            [22, 217375],
+            [20, 227375],
+            [18, 237375],
+            [16, 247375],
+            [15, 287375],
+            [14, 327375],
+            [13, 367375],
+            [12, 407375],
+            [11, 447375],
+            [10, 487375],
+            [9, 527375],
+            [8, 567375],
+            [7, 647375],
+            [6, 727375],
+            [5, 807375],
+            [4, 887375],
+            [3, 1047375],
+            [2, 1207375],
+            [1, 1847375],
+            [0.5, 2487375],
+            [0.25, 3767375],
+        ]
         embed.set_footer(text=f"Last update: {self.last_hashrate_update.ctime()}")
-        return f"**{(123840-(self.blocks % 123840))/24/60:.1f} days** left until block reward halving"
+        for reward, blockHalving in schedule:
+            if blockHalving > self.blocks:
+                break
+        else:
+            return f"Current block: **{self.blocks}**\nThere are no more block reward halving!"
+        return f"Current block: **{self.blocks}**\nNext block for halving: **{blockHalving}**\n**{(blockHalving-self.blocks)/24/60:.1f} days** left until block reward halving to **{reward} SAFEs**"
 
     def diff(self, text, embed):
         embed.set_footer(text=f"Last update: {self.last_hashrate_update.ctime()}")
