@@ -31,6 +31,11 @@ class Bot(discord.Client):
         "https://safe.solopool.org/": lambda: requests.get("https://safe.solopool.org/api/stats").json()["hashrate"],
         "https://equipool.1ds.us": lambda: requests.get("https://equipool.1ds.us/api/stats").json()["pools"]["safecoin"]["hashrate"]*2/10**6,
         "http://safecoinpool.club/": lambda: requests.get("http://safecoinpool.club/api/stats").json()["pools"]["safecoin"]["hashrate"]*2/10**6,
+        "https://safe.bitpool.ro/": lambda: requests.get("https://safe.bitpool.ro/api/stats").json()["pools"]["safecoin"]["hashrate"]*2/10**6,
+        "https://fomominers.com/": lambda: requests.get("https://fomominers.com/api/stats").json()["pools"]["safecoin"]["hashrate"]*2/10**6,
+        "http://safe.pcmining.xyz:8080/": lambda: requests.get("http://safe.pcmining.xyz:8080/api/stats").json()["pools"]["safecoin"]["hashrate"]*2/10**6,
+        "https://safecoin.axepool.com/" lambda: requests.get("https://safecoin.axepool.com/api/stats").json()["pools"]["safecoin"]["hashrate"]*2/10**6,
+        "http://www.macro-pool.com:8088/": lambda: requests.get("http://www.macro-pool.com:8088/api/stats").json()["pools"]["safecoin"]["hashrate"]*2/10**6,
     }
     pools_stat = {}
     blocks = 0
