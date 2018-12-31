@@ -5,7 +5,6 @@ import asyncio
 import re
 import bs4
 import json
-import datetime
 
 class Bot(discord.Client):
     prefix = "!"
