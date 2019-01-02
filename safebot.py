@@ -186,9 +186,8 @@ Expected Global Hash: **{normalize_hashrate((self.hashrate+sum(self.pools_stat.v
             icon = normalize_hashrate(pool_hashrate)
             pHashrate = normalize_hashrate(pool_hashrate)
             hashPercentage = pool_hashrate*100/self.hashrate
-            pools += f"{icon}<{pool}>: **{pHashrate}** (*{int(hashpercentage) if hashPercentage.is_integer() else round(hashPercentage, 2)}*)\n"
-        embed.add_field(name="🇵 🇴 🇴 🇱 🇸", value=f"""{f'''
-'''.join(f"{normalize_hashrate(pool_hashrate)}<{pool}>: **{normalize_hashrate(pool_hashrate)}** (*{pool_hashrate*100/self.hashrate:.2f}%*)" for pool, pool_hashrate in sorted(self.pools_stat.items(), key=lambda kv: kv[1] or -1))}
+            pools += f"{icon}<{pool}>: **{pHashrate}** (*{int(hashPercentage) if hashPercentage.is_integer() else round(hashPercentage, 2)}*)\n"
+        embed.add_field(name="🇵 🇴 🇴 🇱 🇸", value=f"""{pools}
 
 ❔Unknow pool/Solo hashrate: {f"{normalize_hashrate(unknowhash)} (*{unknowhash*100/self.hashrate:.2f}%*)" if unknowhash > 0 else '---'}""", inline=False)
         embed.set_footer(text=f"Last update: {self.last_pool_update.ctime()}")
