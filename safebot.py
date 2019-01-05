@@ -184,13 +184,13 @@ Expected Global Hash: **{normalize_hashrate((self.hashrate+poolsHashrate)/2)}**"
         unknowhash = self.hashrate - poolsHashrate
         pools = ""
         for pool, pool_hashrate in sorted(self.pools_stat.items(), key=lambda kv: kv[1] or -1):
-            if pool_hashrate:
+            if pool_hashrate is None:
+                pools += f"❓<{pool}>: **unknown**\n"
+            else:
                 pHashrate = normalize_hashrate(pool_hashrate)
                 hashPercentage = pool_hashrate*100/self.hashrate
                 icon = pool_icon(hashPercentage)
                 pools += f"{icon}<{pool}>: **{pHashrate}** (*{int(hashPercentage) if hashPercentage.is_integer() else round(hashPercentage, 2)}%*)\n"
-            else:
-                pools += f"❓<{pool}>: **unknown**\n"
         embed.add_field(name="🇵 🇴 🇴 🇱 🇸", value=f"""{pools}
 
 ❔Unknow pool/Solo hashrate: {f"{normalize_hashrate(unknowhash)} (*{unknowhash*100/self.hashrate:.2f}%*)" if unknowhash > 0 else '---'}""", inline=False)
