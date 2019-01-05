@@ -175,19 +175,23 @@ class Bot(discord.Client):
         return f"Network hash: {normalize_hashrate(self.hashrate)}\nWith **{normalize_hashrate(hashrate)}** you will get approximate {hashrate/self.hashrate*blockreward*60:.2f} SAFEs **per hour** and {hashrate/self.hashrate*blockreward*60*24:.2f} SAFEs **per day** at current network difficult."
 
     def poolhash(self, text, embed):
+        poolsHashrate = sum(h for h in self.pools_stat.values() if h)
         embed.add_field(name="🇳 🇪 🇹 🇼 🇴 🇷 🇰", value=f"""Global Network Blocks: **{self.blocks}**
 Global Network Diff: **{self.difficulty:.2f}**
 
 Global Network Hash: **{normalize_hashrate(self.hashrate)}**
-Global Pool Hash: **{normalize_hashrate(sum(self.pools_stat.values()))}**
-Expected Global Hash: **{normalize_hashrate((self.hashrate+sum(self.pools_stat.values()))/2)}**""", inline=False)
-        unknowhash = self.hashrate - sum(self.pools_stat.values())
+Global Pool Hash: **{normalize_hashrate(poolsHashrate)}**
+Expected Global Hash: **{normalize_hashrate((self.hashrate+poolsHashrate)/2)}**""", inline=False)
+        unknowhash = self.hashrate - poolsHashrate
         pools = ""
         for pool, pool_hashrate in sorted(self.pools_stat.items(), key=lambda kv: kv[1] or -1):
-            pHashrate = normalize_hashrate(pool_hashrate)
-            hashPercentage = pool_hashrate*100/self.hashrate
-            icon = pool_icon(hashPercentage)
-            pools += f"{icon}<{pool}>: **{pHashrate}** (*{int(hashPercentage) if hashPercentage.is_integer() else round(hashPercentage, 2)}%*)\n"
+            if pool_hashrate:
+                pHashrate = normalize_hashrate(pool_hashrate)
+                hashPercentage = pool_hashrate*100/self.hashrate
+                icon = pool_icon(hashPercentage)
+                pools += f"{icon}<{pool}>: **{pHashrate}** (*{int(hashPercentage) if hashPercentage.is_integer() else round(hashPercentage, 2)}%*)\n"
+            else:
+                pools += f"❓<{pool}>: **unknown**\n"
         embed.add_field(name="🇵 🇴 🇴 🇱 🇸", value=f"""{pools}
 
 ❔Unknow pool/Solo hashrate: {f"{normalize_hashrate(unknowhash)} (*{unknowhash*100/self.hashrate:.2f}%*)" if unknowhash > 0 else '---'}""", inline=False)
@@ -210,8 +214,6 @@ def getblockreward():
 def normalize_hashrate(hashrate):
     if isinstance(hashrate, str):
         return hashrate
-    if hashrate is None or hashrate < 0:
-        return "unknown"
     if hashrate < 10**3:
         return f"{hashrate:.2f} Sol/s"
     return f"{hashrate/10**3:.2f} kSol/s"
