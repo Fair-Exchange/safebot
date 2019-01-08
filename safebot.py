@@ -1,4 +1,5 @@
 import discord
+import aiohttp
 import requests
 import datetime
 import asyncio
@@ -18,23 +19,74 @@ class Bot(discord.Client):
         "poolhash": "Get Safecoin pools info",
     }
     pools = {
-        "http://safe.pool.sexy/": lambda: requests.get("http://safe.pool.sexy/api6/stats", timeout=10).json()["hashrate"],
-        "https://cryptocommunity.network/": lambda: requests.get("https://cryptocommunity.network/api/stats", timeout=10).json()["pools"]["safecoin"]["hashrate"]*2/10**6,
-        "https://equigems.online/": lambda: requests.get("https://equigems.online/api/stats", timeout=10).json()["pools"]["safecoin"]["hashrate"]*2/10**6,
-        "https://safe.coinblockers.com/": lambda: requests.get("https://safe.coinblockers.com/api/stats", timeout=10).json()["pools"]["safecoin"]["hashrate"]*2/10**6,
-        "https://safecoin.equihub.pro/": lambda: requests.get("https://safecoin.equihub.pro/api/stats", timeout=10).json()["hashrate"],
-        "https://coorp.io/pool/safe": lambda: json.loads(re.search(r"\[[^\]]+\]", bs4.BeautifulSoup(requests.get("https://coorp.io/pool/safe", timeout=10).content, "html.parser").find(lambda tag: tag.name == "script" and "var coins_stat" in tag.text).text).group())[-1]["hashrate"]*2/10**6,
-        "https://safecoin.voidr.net": lambda: requests.get("https://safecoin.voidr.net/api/stats", timeout=10).json()["pools"]["safecoin"]["hashrate"]*2/10**6,
-        "https://safe.suprnova.cc/": lambda: float(bs4.BeautifulSoup(requests.get("https://safe.suprnova.cc/index.php?page=statistics&action=pool", timeout=10).content, "html.parser").find_all("table", {"class":"table table-striped table-bordered table-hover"})[2].tbody.tr.td.span.text.replace(",", "")),
-        "https://minermore.com/pool/SAFE/": lambda: float(requests.get("https://minermore.com/api/status", timeout=10).json()["SAFE"]["hashrate"]),
-        "https://safe.solopool.org/": lambda: requests.get("https://safe.solopool.org/api/stats", timeout=10).json()["hashrate"],
-        "https://equipool.1ds.us": lambda: requests.get("https://equipool.1ds.us/api/stats", timeout=10).json()["pools"]["safecoin"]["hashrate"]*2/10**6,
-        "http://safecoinpool.club/": lambda: requests.get("http://safecoinpool.club/api/stats", timeout=10).json()["pools"]["safecoin"]["hashrate"]*2/10**6,
-        "https://safe.bitpool.ro/": lambda: requests.get("https://safe.bitpool.ro/api/stats", timeout=10).json()["pools"]["safecoin"]["hashrate"]*2/10**6,
-        "https://fomominers.com/": lambda: requests.get("https://fomominers.com/api/stats", timeout=10).json()["pools"]["safecoin"]["hashrate"]*2/10**6,
-        "http://safe.pcmining.xyz:8080/": lambda: requests.get("http://safe.pcmining.xyz:8080/api/stats", timeout=10).json()["pools"]["safecoin"]["hashrate"]*2/10**6,
-        "https://safecoin.axepool.com/": lambda: requests.get("https://safecoin.axepool.com/api/stats", timeout=10).json()["pools"]["safecoin"]["hashrate"]*2/10**6,
-        "http://www.macro-pool.com:8088/": lambda: requests.get("http://www.macro-pool.com:8088/api/stats", timeout=10).json()["pools"]["safecoin"]["hashrate"]*2/10**6,
+        "http://safe.pool.sexy/": {
+            "API": "http://safe.pool.sexy/api6/stats",
+            "fn": lambda content: json.loads(content)["hashrate"],
+        },
+        "https://cryptocommunity.network/": {
+            "API": "https://cryptocommunity.network/api/stats",
+            "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
+        },
+        "https://equigems.online/": {
+            "API": "https://equigems.online/api/stats",
+            "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
+        },
+        "https://safe.coinblockers.com/": {
+            "API": "https://safe.coinblockers.com/api/stats",
+            "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
+        },
+        "https://safecoin.equihub.pro/": {
+            "API": "https://safecoin.equihub.pro/api/stats",
+            "fn": lambda content: json.loads(content)["hashrate"],
+        },
+        "https://coorp.io/pool/safe": {
+            "API": "https://coorp.io/pool/safe",
+            "fn": lambda content: json.loads(re.search(r"\[[^\]]+\]", bs4.BeautifulSoup(content, "html.parser").find(lambda tag: tag.name == "script" and "var coins_stat" in tag.text).text).group())[-1]["hashrate"]*2/10**6,
+        },
+        "https://safecoin.voidr.net": {
+            "API": "https://safecoin.voidr.net/api/stats",
+            "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
+        },
+        "https://safe.suprnova.cc/": {
+            "API": "https://safe.suprnova.cc/index.php?page=statistics&action=pool",
+            "fn": lambda content: float(bs4.BeautifulSoup(content, "html.parser").find_all("table", {"class":"table table-striped table-bordered table-hover"})[2].tbody.tr.td.span.text.replace(",", "")),
+        },
+        "https://minermore.com/pool/SAFE/": {
+            "API": "https://minermore.com/api/status",
+            "fn": lambda content: float(json.loads(content)["SAFE"]["hashrate"]),
+        },
+        "https://safe.solopool.org/": {
+            "API": "https://safe.solopool.org/api/stats",
+            "fn": lambda content: json.loads(content)["hashrate"],
+        },
+        "https://equipool.1ds.us": {
+            "API": "https://equipool.1ds.us/api/stats",
+            "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
+        },
+        "http://safecoinpool.club/": {
+            "API": "http://safecoinpool.club/api/stats",
+            "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
+        },
+        "https://safe.bitpool.ro/": {
+            "API": "https://safe.bitpool.ro/api/stats",
+            "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
+        },
+        "https://fomominers.com/": {
+            "API": "https://fomominers.com/api/stats",
+            "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
+        },
+        "http://safe.pcmining.xyz:8080/": {
+            "API": "http://safe.pcmining.xyz:8080/api/stats",
+            "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
+        },
+        "https://safecoin.axepool.com/": {
+            "API": "https://safecoin.axepool.com/api/stats",
+            "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
+        },
+        "http://www.macro-pool.com:8088/": {
+            "API": "http://www.macro-pool.com:8088/api/stats",
+            "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
+        },
     }
     pools_stat = {}
     blocks = 0
@@ -84,20 +136,24 @@ class Bot(discord.Client):
     async def pool_update(self):
         await self.wait_until_ready()
         while not self.is_closed():
-            for pool, fn in self.pools.items():
-                try:
-                    hashrate = float(fn())
-                except:
-                    self.pools_stat[pool] = None
-                else:
-                    self.pools_stat[pool] = hashrate
+            async with aiohttp.ClientSession() as session:
+                for pool, i in self.pools.items():
+                    try:
+                        async with session.get(i["API"], timeout=10) as response:
+                            hashrate = float(i["fn"](await response.text()))
+                    except:
+                        self.pools_stat[pool] = None
+                    else:
+                        self.pools_stat[pool] = hashrate
+                await session.close()
             self.last_pool_update = datetime.datetime.utcnow()
-            await asyncio.sleep(120)
+            await asyncio.sleep(60)
 
     async def hashrate_update(self):
         await self.wait_until_ready()
         while not self.is_closed():
-            i = getmininginfo()
+
+            i = await getmininginfo()
             hashrate = i.get("networkhashps")
             if not hashrate is None:
                 self.blocks = i.get("blocks")
@@ -105,7 +161,9 @@ class Bot(discord.Client):
                 self.hashrate = hashrate
                 self.last_hashrate_update = datetime.datetime.utcnow()
                 await self.change_presence(status=discord.Status.online, activity=discord.Game(name=normalize_hashrate(hashrate)))
-            await asyncio.sleep(45)
+                await asyncio.sleep(45)
+            else:
+                await asyncio.sleep(1)
 
     def block(self, text, embed):
         embed.set_footer(text=f"Last update: {self.last_hashrate_update.ctime()}")
@@ -197,12 +255,13 @@ Expected Global Hash: **{normalize_hashrate((self.hashrate+poolsHashrate)/2)}**"
         embed.set_footer(text=f"Last update: {self.last_pool_update.ctime()}")
         return embed
 
-def getmininginfo():
-    try:
-        r = requests.post("http://127.0.0.1:8771/", auth=("user","password"), data='{"method": "getmininginfo"}').json()
-    except:
-        return {}
-    return r.get("result") or {}
+async def getmininginfo():
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.post("http://127.0.0.1:8771/", auth=aiohttp.BasicAuth("user","password"), json={'method': 'getmininginfo'}) as response:
+                return json.loads(await response.text()).get("result")
+        except:
+            return {}
 
 def getblockreward():
     try:
