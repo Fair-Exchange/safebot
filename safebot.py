@@ -19,10 +19,6 @@ class Bot(discord.Client):
         "poolhash": "Get Safecoin pools info",
     }
     pools = {
-        "http://safe.pool.sexy/": {
-            "API": "http://safe.pool.sexy/api6/stats",
-            "fn": lambda content: json.loads(content)["hashrate"],
-        },
         "https://cryptocommunity.network/": {
             "API": "https://cryptocommunity.network/api/stats",
             "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
@@ -39,17 +35,9 @@ class Bot(discord.Client):
             "API": "https://safecoin.equihub.pro/api/stats",
             "fn": lambda content: json.loads(content)["hashrate"],
         },
-        "https://coorp.io/pool/safe": {
-            "API": "https://coorp.io/pool/safe",
-            "fn": lambda content: json.loads(re.search(r"\[[^\]]+\]", bs4.BeautifulSoup(content, "html.parser").find(lambda tag: tag.name == "script" and "var coins_stat" in tag.text).text).group())[-1]["hashrate"]*2/10**6,
-        },
         "https://safecoin.voidr.net": {
             "API": "https://safecoin.voidr.net/api/stats",
             "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
-        },
-        "https://safe.suprnova.cc/": {
-            "API": "https://safe.suprnova.cc/index.php?page=statistics&action=pool",
-            "fn": lambda content: float(bs4.BeautifulSoup(content, "html.parser").find_all("table", {"class":"table table-striped table-bordered table-hover"})[2].tbody.tr.td.span.text.replace(",", "")),
         },
         "https://minermore.com/pool/SAFE/": {
             "API": "https://minermore.com/api/status",
