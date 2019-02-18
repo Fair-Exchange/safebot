@@ -19,10 +19,6 @@ class Bot(discord.Client):
         "poolhash": "Get Safecoin pools info",
     }
     pools = {
-        "https://cryptocommunity.network/": {
-            "API": "https://cryptocommunity.network/api/stats",
-            "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
-        },
         "https://safe.coinblockers.com/": {
             "API": "https://safe.coinblockers.com/api/stats",
             "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
