@@ -66,11 +66,11 @@ class Bot(discord.Client):
         "http://zergpool.com": {
             "API": "http://api.zergpool.com:8080/api/currencies",
             "fn": lambda content: json.loads(content)["SAFE"]["hashrate"],
-        }
+        },
         "https://equihash.pro": {
             "API": "https://equihash.pro/api/stats",
             "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
-        }
+        },
     }
     pools_stat = {}
     blocks = 0
