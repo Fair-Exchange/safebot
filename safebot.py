@@ -250,7 +250,7 @@ async def getmininginfo():
     async with aiohttp.ClientSession() as session:
         try:
             async with session.post("http://127.0.0.1:8771/", auth=aiohttp.BasicAuth("user","password"), json={'method': 'getmininginfo'}) as response:
-                return json.loads(await response.text()).get("result")
+                return json.loads(await response.text()).get("result") or {}
         except:
             return {}
 
