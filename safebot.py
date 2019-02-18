@@ -67,10 +67,6 @@ class Bot(discord.Client):
             "API": "https://safe.bitpool.ro/api/stats",
             "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
         },
-        "http://safe.pcmining.xyz:8080/": {
-            "API": "http://safe.pcmining.xyz:8080/api/stats",
-            "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
-        },
         "https://safecoin.axepool.com/": {
             "API": "https://safecoin.axepool.com/api/stats",
             "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
