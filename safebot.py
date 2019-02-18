@@ -35,10 +35,6 @@ class Bot(discord.Client):
             "API": "https://safecoin.equihub.pro/api/stats",
             "fn": lambda content: json.loads(content)["hashrate"],
         },
-        "https://coorp.io/pool/safe": {
-            "API": "https://coorp.io/pool/safe",
-            "fn": lambda content: json.loads(re.search(r"\[[^\]]+\]", bs4.BeautifulSoup(content, "html.parser").find(lambda tag: tag.name == "script" and "var coins_stat" in tag.text).text).group())[-1]["hashrate"]*2/10**6,
-        },
         "https://safecoin.voidr.net": {
             "API": "https://safecoin.voidr.net/api/stats",
             "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
