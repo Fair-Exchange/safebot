@@ -55,10 +55,6 @@ class Bot(discord.Client):
             "API": "https://safecoin.axepool.com/api/stats",
             "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
         },
-        "http://www.macro-pool.com:8088/": {
-            "API": "http://www.macro-pool.com:8088/api/stats",
-            "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
-        },
         "http://zergpool.com": {
             "API": "http://api.zergpool.com:8080/api/currencies",
             "fn": lambda content: json.loads(content)["SAFE"]["hashrate"],
