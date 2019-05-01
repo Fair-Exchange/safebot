@@ -56,7 +56,7 @@ class Bot(discord.Client):
             "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
         },
         "http://safe.raptorpool.org/": {
-            "API": "http://safe.raptorpool.org/api/stats"
+            "API": "http://safe.raptorpool.org/api/stats",
             "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
         },
     }
