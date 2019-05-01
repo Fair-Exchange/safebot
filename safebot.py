@@ -43,10 +43,6 @@ class Bot(discord.Client):
             "API": "https://equipool.1ds.us/api/stats",
             "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
         },
-        "http://safecoinpool.club/": {
-            "API": "http://safecoinpool.club/api/stats",
-            "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
-        },
         "https://safe.bitpool.ro/": {
             "API": "https://safe.bitpool.ro/api/stats",
             "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
