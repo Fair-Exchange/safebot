@@ -111,7 +111,7 @@ class Bot(discord.Client):
             async with aiohttp.ClientSession() as session:
                 for pool, i in self.pools.items():
                     try:
-                        async with session.get(i["API"], timeout=10) as response:
+                        async with session.get(i["API"], timeout=10, verify_ssl=False) as response:
                             hashrate = float(i["fn"](await response.text()))
                     except:
                         self.pools_stat[pool] = None
