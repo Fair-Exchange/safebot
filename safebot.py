@@ -124,7 +124,6 @@ class Bot(discord.Client):
     async def hashrate_update(self):
         await self.wait_until_ready()
         while not self.is_closed():
-
             i = await getmininginfo()
             hashrate = i.get("networkhashps")
             if not hashrate is None:
@@ -132,7 +131,13 @@ class Bot(discord.Client):
                 self.difficulty = i.get("difficulty")
                 self.hashrate = hashrate
                 self.last_hashrate_update = datetime.datetime.utcnow()
-                await self.change_presence(status=discord.Status.online, activity=discord.Game(name=normalize_hashrate(hashrate)))
+                while True:
+                    try:
+                        await self.change_presence(status=discord.Status.online, activity=discord.Game(name=normalize_hashrate(hashrate)))
+                    except websockets.exceptions.ConnectionClosed:
+                        await asyncio.sleep(1)
+                    else:
+                        break
                 await asyncio.sleep(45)
             else:
                 await asyncio.sleep(1)
