@@ -58,8 +58,8 @@ class Bot(discord.Client):
             "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
         },
         "https://www.nlpool.nl/": {
-            "API": "https://www.nlpool.nl/api/status",
-            "fn": lambda content: float(json.loads(content)["SAFE"]["currencies"]),
+            "API": "https://www.nlpool.nl/api/currencies",
+            "fn": lambda content: float(json.loads(content)["SAFE"]["hashrate"]),
         },
     }
     pools_stat = {}
