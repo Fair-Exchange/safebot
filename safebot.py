@@ -232,7 +232,7 @@ Expected Global Hash: **{normalize_hashrate((self.hashrate+poolsHashrate)/2)}**"
 
     def nodes(self, text, embed):
         info = getnodesinfo()
-        return f"""There are **{info["node_count"]}** active SafeNodes in the blockchain
+        return f"""There are **{info["node_count"]}** active SafeNodes in the blockchain with a total collateral of {info["collateral_total"]}
 ```
 Tier 3: {info["tier_3_count"]}
 Tier 2: {info["tier_2_count"]}
