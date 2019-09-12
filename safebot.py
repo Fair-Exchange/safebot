@@ -17,6 +17,8 @@ class Bot(discord.Client):
         "blockreward": "Current block reward",
         "hashpower": "Calculate estimated earning with your hashrate",
         "poolhash": "Get Safecoin pools info",
+        "nodes": "Get info about SafeNodes of the blockchain",
+        "node": "Get info about a node",
     }
     pools = {
         "https://safe.coinblockers.com/": {
@@ -228,6 +230,30 @@ Expected Global Hash: **{normalize_hashrate((self.hashrate+poolsHashrate)/2)}**"
         embed.set_footer(text=f"Last update: {self.last_pool_update.ctime()}")
         return embed
 
+    def nodes(self, text, embed):
+        info = getnodesinfo()
+        return f"""There are **{info["node_count"]}** active SafeNodes in the blockchain
+```
+Tier 3: {info["tier_3_count"]}
+Tier 2: {info["tier_2_count"]}
+Tier 1: {info["tier_1_count"]}
+Tier 0: {info["tier_0_count"]}
+```"""
+
+    def node(self, text, embed):
+        if not text or text.isspace():
+            return f"**Usage:** *{self.prefix}node <safekey/address>*"
+        text = text.strip()
+        info = getnodesinfo()
+        for n in info["SafeNodes"]:
+            if n["safekey"] == text or n["SAFE_address"] == text:
+                embed.add_field(name=f"SafeKey (tier {n['tier']})", value=n["safekey"])
+                embed.add_field(name="Address", value=n["SAFE_address"], inline=False)
+                embed.add_field(name="Balance", value=n["balance"])
+                embed.add_field(name="Collateral", value=n["collateral"])
+                return embed
+        return "SafeNode not found"
+
 async def getmininginfo():
     async with aiohttp.ClientSession() as session:
         try:
@@ -239,6 +265,12 @@ async def getmininginfo():
 def getblockreward():
     try:
         return requests.post("http://127.0.0.1:8771/", auth=("user","password"), data='{"method": "getblocksubsidy"}').json()["result"]["miner"]
+    except:
+        return None
+
+def getnodesinfo():
+    try:
+        return requests.post("http://127.0.0.1:8771/", auth=("user","password"), data='{"method": "getactivenodes"}').json()["result"]
     except:
         return None
 
