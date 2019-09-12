@@ -59,7 +59,7 @@ class Bot(discord.Client):
         },
         "https://www.nlpool.nl/": {
             "API": "https://www.nlpool.nl/api/status",
-            "fn": lambda content: float(json.loads(content)["SAFE"]["hashrate"]),
+            "fn": lambda content: float(json.loads(content)["SAFE"]["currencies"]),
         },
     }
     pools_stat = {}
