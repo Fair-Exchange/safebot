@@ -248,7 +248,7 @@ Tier 0: {info["tier_0_count"]}
             with open("nodes.json") as registrations:
                 j = json.load(registrations)
                 if str(author.id) in j:
-                    text = j[str(author.id)]
+                    nodes = j[str(author.id)]
                 else:
                     return f"**Usage:** *{self.prefix}node <safekey/address>* or associate a node with your account using *{self.prefix}addnode <safekey/address>*"
         else:
@@ -271,6 +271,7 @@ Tier 0: {info["tier_0_count"]}
                     e = discord.Embed()
                     e.set_author(name="SafeBot", url="http://www.safecoin.org",
                                     icon_url="https://safe.trade/assets/logo2-f90245b6bdcfa4f7582e36d0bc7c69d513934aa8c5a1c6cbc884ef91768bda00.png")
+                    break
             else:
                 if len(nodes) == 1:
                     return "SafeNode is not active or does not exist"
