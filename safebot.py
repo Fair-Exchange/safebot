@@ -275,6 +275,7 @@ Tier 0: {info["tier_0_count"]}
         embed.add_field(name="Offline nodes", value="\n".join(offline))
         if dm:
             return embed
+        await author.send(embed=embed)
         return "I have sent you a direct message with info about your nodes"
 
     def addnode(self, text, embed, author, dm):
@@ -326,9 +327,10 @@ Tier 0: {info["tier_0_count"]}
         usid = str(author.id)
         with open("nodes.json") as registrations:
             j = json.load(registrations)
-            embed.add_field(name="Nodes associated with your account", value="\n".join(j[usid]) if usid in j else "You don't have any node associated with your account")
+            embed.add_field(name="Nodes associated with your account", value=f"```\n{"\n".join(j[usid])}```" if usid in j else "You don't have any node associated with your account")
         if dm:
             return embed
+        await author.send(embed=embed)
         return "I have sent you a direct message"
 
 async def getmininginfo():
