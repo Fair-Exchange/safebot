@@ -276,6 +276,9 @@ Tier 0: {info["tier_0_count"]}
         if dm:
             return embed
         author.send(embed=embed)
+        embed = discord.Embed()
+        embed.set_author(name="SafeBot", url="http://www.safecoin.org",
+                        icon_url="https://safe.trade/assets/logo2-f90245b6bdcfa4f7582e36d0bc7c69d513934aa8c5a1c6cbc884ef91768bda00.png")
         return "I have sent you a direct message with info about your nodes"
 
     def addnode(self, text, embed, author, dm):
@@ -331,6 +334,9 @@ Tier 0: {info["tier_0_count"]}
         if dm:
             return embed
         author.send(embed=embed)
+        embed = discord.Embed()
+        embed.set_author(name="SafeBot", url="http://www.safecoin.org",
+                        icon_url="https://safe.trade/assets/logo2-f90245b6bdcfa4f7582e36d0bc7c69d513934aa8c5a1c6cbc884ef91768bda00.png")
         return "I have sent you a direct message"
 
 async def getmininginfo():
