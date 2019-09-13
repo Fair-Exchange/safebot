@@ -101,7 +101,7 @@ class Bot(discord.Client):
                     embed = discord.Embed()
                     embed.set_author(name="SafeBot", url="http://www.safecoin.org",
                                     icon_url="https://safe.trade/assets/logo2-f90245b6bdcfa4f7582e36d0bc7c69d513934aa8c5a1c6cbc884ef91768bda00.png")
-                    fnout = getattr(self, command)(message.content[message.content.index(" "):] if " " in message.content else "", embed, message.author)
+                    fnout = getattr(self, command)(message.content[message.content.index(" "):] if " " in message.content else "", embed, message.author, isinstance(message.channel, discord.DMChannel))
                     if isinstance(fnout, discord.Embed):
                         embed = fnout
                     else:
@@ -147,11 +147,11 @@ class Bot(discord.Client):
             else:
                 await asyncio.sleep(1)
 
-    def block(self, text, embed, author):
+    def block(self, text, embed, author, dm):
         embed.set_footer(text=f"Last update: {self.last_hashrate_update.ctime()}")
         return f"Current block is **{self.blocks}**"
 
-    def halve(self, text, embed, author):
+    def halve(self, text, embed, author, dm):
         schedule = [
             [64, 123840],
             [56, 178378],
@@ -187,18 +187,18 @@ class Bot(discord.Client):
             return f"Current block: **{self.blocks}**\nThere are no more block reward halving!"
         return f"Current block: **{self.blocks}**\nNext block for halving: **{blockHalving}**\n**{(blockHalving-self.blocks)/24/60:.1f} days** left until block reward halving to **{reward} SAFEs**"
 
-    def diff(self, text, embed, author):
+    def diff(self, text, embed, author, dm):
         embed.set_footer(text=f"Last update: {self.last_hashrate_update.ctime()}")
         return f"Current difficulty is **{self.difficulty:0.2f}**"
 
-    def nethash(self, text, embed, author):
+    def nethash(self, text, embed, author, dm):
         embed.set_footer(text=f"Last update: {self.last_hashrate_update.ctime()}")
         return f"Current network hash is **{normalize_hashrate(self.hashrate)}**"
 
-    def blockreward(self, text, embed, author):
+    def blockreward(self, text, embed, author, dm):
         return f"Current block reward is **{getblockreward():.0f} SAFE**"
 
-    def hashpower(self, text, embed, author):
+    def hashpower(self, text, embed, author, dm):
         if not text or text.isspace():
             return f"**Usage:** *{self.prefix}hashpower <hashrate>*"
         try:
@@ -209,7 +209,7 @@ class Bot(discord.Client):
         embed.set_footer(text=f"Last update: {self.last_hashrate_update.ctime()}")
         return f"Network hash: {normalize_hashrate(self.hashrate)}\nWith **{normalize_hashrate(hashrate)}** you will get approximate {hashrate/self.hashrate*blockreward*60:.2f} SAFEs **per hour** and {hashrate/self.hashrate*blockreward*60*24:.2f} SAFEs **per day** at current network difficult."
 
-    def poolhash(self, text, embed, author):
+    def poolhash(self, text, embed, author, dm):
         poolsHashrate = sum(h for h in self.pools_stat.values() if h)
         embed.add_field(name="🇳 🇪 🇹 🇼 🇴 🇷 🇰", value=f"""Global Network Blocks: **{self.blocks}**
 Global Network Diff: **{self.difficulty:.2f}**
@@ -233,7 +233,7 @@ Expected Global Hash: **{normalize_hashrate((self.hashrate+poolsHashrate)/2)}**"
         embed.set_footer(text=f"Last update: {self.last_pool_update.ctime()}")
         return embed
 
-    def nodes(self, text, embed, author):
+    def nodes(self, text, embed, author, dm):
         info = getnodesinfo()
         return f"""There are **{info["node_count"]} active SafeNodes** in the blockchain with a **total collateral of {info["collateral_total"]:.2f} SAFE**
 ```
@@ -243,7 +243,7 @@ Tier 1: {info["tier_1_count"]}
 Tier 0: {info["tier_0_count"]}
 ```"""
 
-    def node(self, text, embed, author):
+    def node(self, text, embed, author, dm):
         if not text or text.isspace():
             with open("nodes.json") as registrations:
                 j = json.load(registrations)
@@ -251,7 +251,7 @@ Tier 0: {info["tier_0_count"]}
                     text = j[str(author.id)]
                 else:
                     return f"**Usage:** *{self.prefix}node <safekey/address>* or associate a node with your account using *{self.prefix}addnode <safekey/address>*"
-        else
+        else:
             nodes = [text.strip()]
         info = getnodesinfo()
         offline = []
@@ -273,10 +273,11 @@ Tier 0: {info["tier_0_count"]}
                     return "SafeNode is not active or does not exist"
                 offline.append(rn)
         embed.add_field(name="Offline nodes", value="\n".join(offline))
-        author.send(embed=embed)
+        if dm:
+            return embed
         return "I have sent you a direct message with info about your nodes"
 
-    def addnode(self, text, embed, author):
+    def addnode(self, text, embed, author, dm):
         if not text or text.isspace():
             return f"**Usage:** *{self.prefix}addnode <safekey/address>*"
         text = text.strip()
@@ -291,10 +292,10 @@ Tier 0: {info["tier_0_count"]}
         with open("nodes.json") as registrations:
             j = json.load(registrations)
             if usid in j:
-                if (len(j[usid]) == 10)
+                if len(j[usid]) == 10:
                     return "You reached maximum node limit, use *{self.prefix}delnode <index/address>* to remove a node and *{self.prefix}listnodes* to show nodes associated with your account"
                 for n in j[usid]:
-                    if (n == text)
+                    if n == text:
                         return "Node has already been added"
                 j[usid].append(text)
             else:
@@ -303,10 +304,11 @@ Tier 0: {info["tier_0_count"]}
             json.dump(j, registrations)
         return "Node is now associated with your account!"
 
-    def delnode(self, text, embed, author):
+    def delnode(self, text, embed, author, dm):
         if not text or text.isspace():
             return f"**Usage:** *{self.prefix}addnode <safekey/address>*"
         text = text.strip()
+        usid = str(author.id)
         with open("nodes.json") as registrations:
             j = json.load(registrations)
             if usid in j:
@@ -320,11 +322,13 @@ Tier 0: {info["tier_0_count"]}
             json.dump(j, registrations)
         return "Node is no longer associated with you"
 
-    def listnodes(self, text, embed, author):
+    def listnodes(self, text, embed, author, dm):
+        usid = str(author.id)
         with open("nodes.json") as registrations:
             j = json.load(registrations)
             embed.add_field(name="Nodes associated with your account", value="\n".join(j[usid]) if usid in j else "You don't have any node associated with your account")
-            author.send(embed=embed)
+        if dm:
+            return embed
         return "I have sent you a direct message"
 
 async def getmininginfo():
