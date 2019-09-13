@@ -19,7 +19,9 @@ class Bot(discord.Client):
         "poolhash": "Get Safecoin pools info",
         "nodes": "Get info about SafeNodes of the blockchain",
         "node": "Get info about a node",
-        "addnode": "Associate a node with your account",
+        "addnode": "Associate a node with your account (max 10) to use !node without any argument",
+        "delnode": "Remove association to a node with your account",
+        "listnodes": "Get list of nodes associated with your account",
     }
     pools = {
         "https://safe.coinblockers.com/": {
@@ -249,15 +251,30 @@ Tier 0: {info["tier_0_count"]}
                     text = j[str(author.id)]
                 else:
                     return f"**Usage:** *{self.prefix}node <safekey/address>* or associate a node with your account using *{self.prefix}addnode <safekey/address>*"
-        text = text.strip()
+        else
+            nodes = [text.strip()]
         info = getnodesinfo()
-        for n in info["SafeNodes"]:
-            if n["safekey"] == text or n["SAFE_address"] == text:
-                embed.add_field(name=f"Address (tier {n['tier']})", value=n["SAFE_address"], inline=False)
-                embed.add_field(name="Balance", value=n["balance"])
-                embed.add_field(name="Collateral", value=n["collateral"])
-                return embed
-        return "SafeNode is not active or does not exist"
+        offline = []
+        for rn in nodes:
+            for n in info["SafeNodes"]:
+                if n["safekey"] == rn or n["SAFE_address"] == rn:
+                    embed.add_field(name=f"Address (tier {n['tier']})", value=n["SAFE_address"], inline=False)
+                    embed.add_field(name="Balance", value=n["balance"])
+                    embed.add_field(name="Collateral", value=n["collateral"])
+
+                    if len(nodes) == 1:
+                        return embed
+                    author.send(embed=embed)
+                    embed = discord.Embed()
+                    embed.set_author(name="SafeBot", url="http://www.safecoin.org",
+                                    icon_url="https://safe.trade/assets/logo2-f90245b6bdcfa4f7582e36d0bc7c69d513934aa8c5a1c6cbc884ef91768bda00.png")
+            else:
+                if len(nodes) == 1:
+                    return "SafeNode is not active or does not exist"
+                offline.append(rn)
+        embed.add_field(name="Offline nodes", value="\n".join(offline))
+        author.send(embed=embed)
+        return "I have sent you a direct message with info about your nodes"
 
     def addnode(self, text, embed, author):
         if not text or text.isspace():
@@ -273,12 +290,42 @@ Tier 0: {info["tier_0_count"]}
         usid = str(author.id)
         with open("nodes.json") as registrations:
             j = json.load(registrations)
-            if usid in j and j[usid] == text:
-                return "Node has already been added"
-        j[usid] = text
+            if usid in j:
+                if (len(j[usid]) == 10)
+                    return "You reached maximum node limit, use *{self.prefix}delnode <index/address>* to remove a node and *{self.prefix}listnodes* to show nodes associated with your account"
+                for n in j[usid]:
+                    if (n == text)
+                        return "Node has already been added"
+                j[usid].append(text)
+            else:
+                j[usid] = [text]
         with open("nodes.json", "w") as registrations:
             json.dump(j, registrations)
-        return "Node added! Now you can use *{self.prefix}node* without any argument"
+        return "Node is now associated with your account!"
+
+    def delnode(self, text, embed, author):
+        if not text or text.isspace():
+            return f"**Usage:** *{self.prefix}addnode <safekey/address>*"
+        text = text.strip()
+        with open("nodes.json") as registrations:
+            j = json.load(registrations)
+            if usid in j:
+                try:
+                    j[usid].remove(text)
+                except:
+                    return "Node is not associated to your account"
+            else:
+                return "You don't have any node associated with your account"
+        with open("nodes.json", "w") as registrations:
+            json.dump(j, registrations)
+        return "Node is no longer associated with you"
+
+    def listnodes(self, text, embed, author):
+        with open("nodes.json") as registrations:
+            j = json.load(registrations)
+            embed.add_field(name="Nodes associated with your account", value="\n".join(j[usid]) if usid in j else "You don't have any node associated with your account")
+            author.send(embed=embed)
+        return "I have sent you a direct message"
 
 async def getmininginfo():
     async with aiohttp.ClientSession() as session:
