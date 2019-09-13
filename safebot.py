@@ -247,8 +247,7 @@ Tier 0: {info["tier_0_count"]}
         info = getnodesinfo()
         for n in info["SafeNodes"]:
             if n["safekey"] == text or n["SAFE_address"] == text:
-                embed.add_field(name=f"SafeKey (tier {n['tier']})", value=n["safekey"])
-                embed.add_field(name="Address", value=n["SAFE_address"], inline=False)
+                embed.add_field(name=f"Address (tier {n['tier']})", value=n["SAFE_address"], inline=False)
                 embed.add_field(name="Balance", value=n["balance"])
                 embed.add_field(name="Collateral", value=n["collateral"])
                 return embed
