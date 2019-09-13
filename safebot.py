@@ -276,9 +276,9 @@ Tier 0: {info["tier_0_count"]}
                 if len(nodes) == 1:
                     return "SafeNode is not active or does not exist"
                 offline.append(rn)
-        e.add_field(name="Offline nodes", value="\n".join(offline))
+        e.add_field(name="Offline nodes", value="\n".join(offline) if offline else "All your nodes are online!")
         if dm:
-            return embed
+            return e
         self.loop.create_task(author.send(embed=e))
         return "I have sent you a direct message with info about your nodes"
 
