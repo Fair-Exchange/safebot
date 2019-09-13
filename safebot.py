@@ -267,7 +267,7 @@ Tier 0: {info["tier_0_count"]}
 
                     if len(nodes) == 1:
                         return e
-                    author.send(embed=e)
+                    self.loop.create_task(author.send(embed=e))
                     e = discord.Embed()
                     e.set_author(name="SafeBot", url="http://www.safecoin.org",
                                     icon_url="https://safe.trade/assets/logo2-f90245b6bdcfa4f7582e36d0bc7c69d513934aa8c5a1c6cbc884ef91768bda00.png")
@@ -278,7 +278,7 @@ Tier 0: {info["tier_0_count"]}
         e.add_field(name="Offline nodes", value="\n".join(offline))
         if dm:
             return embed
-        author.send(embed=e)
+        self.loop.create_task(author.send(embed=e))
         return "I have sent you a direct message with info about your nodes"
 
     def addnode(self, text, embed, author, dm):
@@ -336,7 +336,7 @@ Tier 0: {info["tier_0_count"]}
             e.add_field(name="Nodes associated with your account", value='\n'.join(j[usid]) if usid in j else "You don't have any node associated with your account")
         if dm:
             return e
-        author.send(embed=e)
+        self.loop.create_task(author.send(embed=e))
         return "I have sent you a direct message"
 
 async def getmininginfo():
