@@ -243,11 +243,11 @@ Tier 0: {info["tier_0_count"]}
 
     def node(self, text, embed, author):
         if not text or text.isspace():
-            with open("nodes.json", "rw") as registrations:
+            with open("nodes.json") as registrations:
                 j = json.load(registrations)
-                if author.id in j:
-                    text = j[author.id]
-                else
+                if str(author.id) in j:
+                    text = j[str(author.id)]
+                else:
                     return f"**Usage:** *{self.prefix}node <safekey/address>* or associate a node with your account using *{self.prefix}addnode <safekey/address>*"
         text = text.strip()
         info = getnodesinfo()
@@ -270,13 +270,15 @@ Tier 0: {info["tier_0_count"]}
         else:
             return "SafeNode is not active or does not exist"
 
-        with open("nodes.json", "rw") as registrations:
+        usid = str(author.id)
+        with open("nodes.json") as registrations:
             j = json.load(registrations)
-            if author.id in j and j[author.id] == text:
+            if usid in j and j[usid] == text:
                 return "Node has already been added"
-            j[author] = text
+        j[usid] = text
+        with open("nodes.json", "w") as registrations:
             json.dump(j, registrations)
-        return "Node added! Now you can use !node without any argument"
+        return "Node added! Now you can use *{self.prefix}node* without any argument"
 
 async def getmininginfo():
     async with aiohttp.ClientSession() as session:
