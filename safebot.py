@@ -255,30 +255,30 @@ Tier 0: {info["tier_0_count"]}
             nodes = [text.strip()]
         info = getnodesinfo()
         offline = []
+        e = discord.Embed()
+        e.set_author(name="SafeBot", url="http://www.safecoin.org",
+                        icon_url="https://safe.trade/assets/logo2-f90245b6bdcfa4f7582e36d0bc7c69d513934aa8c5a1c6cbc884ef91768bda00.png")
         for rn in nodes:
             for n in info["SafeNodes"]:
                 if n["safekey"] == rn or n["SAFE_address"] == rn:
-                    embed.add_field(name=f"Address (tier {n['tier']})", value=n["SAFE_address"], inline=False)
-                    embed.add_field(name="Balance", value=n["balance"])
-                    embed.add_field(name="Collateral", value=n["collateral"])
+                    e.add_field(name=f"Address (tier {n['tier']})", value=n["SAFE_address"], inline=False)
+                    e.add_field(name="Balance", value=n["balance"])
+                    e.add_field(name="Collateral", value=n["collateral"])
 
                     if len(nodes) == 1:
-                        return embed
-                    author.send(embed=embed)
-                    embed = discord.Embed()
-                    embed.set_author(name="SafeBot", url="http://www.safecoin.org",
+                        return e
+                    author.send(embed=e)
+                    e = discord.Embed()
+                    e.set_author(name="SafeBot", url="http://www.safecoin.org",
                                     icon_url="https://safe.trade/assets/logo2-f90245b6bdcfa4f7582e36d0bc7c69d513934aa8c5a1c6cbc884ef91768bda00.png")
             else:
                 if len(nodes) == 1:
                     return "SafeNode is not active or does not exist"
                 offline.append(rn)
-        embed.add_field(name="Offline nodes", value="\n".join(offline))
+        e.add_field(name="Offline nodes", value="\n".join(offline))
         if dm:
             return embed
-        author.send(embed=embed)
-        embed = discord.Embed()
-        embed.set_author(name="SafeBot", url="http://www.safecoin.org",
-                        icon_url="https://safe.trade/assets/logo2-f90245b6bdcfa4f7582e36d0bc7c69d513934aa8c5a1c6cbc884ef91768bda00.png")
+        author.send(embed=e)
         return "I have sent you a direct message with info about your nodes"
 
     def addnode(self, text, embed, author, dm):
@@ -328,15 +328,15 @@ Tier 0: {info["tier_0_count"]}
 
     def listnodes(self, text, embed, author, dm):
         usid = str(author.id)
+        e = discord.Embed()
+        e.set_author(name="SafeBot", url="http://www.safecoin.org",
+                        icon_url="https://safe.trade/assets/logo2-f90245b6bdcfa4f7582e36d0bc7c69d513934aa8c5a1c6cbc884ef91768bda00.png")
         with open("nodes.json") as registrations:
             j = json.load(registrations)
-            embed.add_field(name="Nodes associated with your account", value='\n'.join(j[usid]) if usid in j else "You don't have any node associated with your account")
+            e.add_field(name="Nodes associated with your account", value='\n'.join(j[usid]) if usid in j else "You don't have any node associated with your account")
         if dm:
-            return embed
-        author.send(embed=embed)
-        embed = discord.Embed()
-        embed.set_author(name="SafeBot", url="http://www.safecoin.org",
-                        icon_url="https://safe.trade/assets/logo2-f90245b6bdcfa4f7582e36d0bc7c69d513934aa8c5a1c6cbc884ef91768bda00.png")
+            return e
+        author.send(embed=e)
         return "I have sent you a direct message"
 
 async def getmininginfo():
