@@ -334,7 +334,7 @@ Tier 0: {info["tier_0_count"]}
                         icon_url="https://safe.trade/assets/logo2-f90245b6bdcfa4f7582e36d0bc7c69d513934aa8c5a1c6cbc884ef91768bda00.png")
         with open("nodes.json") as registrations:
             j = json.load(registrations)
-            e.add_field(name="Nodes associated with your account", value='\n'.join(j[usid]) if usid in j else "You don't have any node associated with your account")
+            e.add_field(name="Nodes associated with your account", value='\n'.join(j[usid]) if usid in j and j[usid] else "You don't have any node associated with your account")
         if dm:
             return e
         self.loop.create_task(author.send(embed=e))
