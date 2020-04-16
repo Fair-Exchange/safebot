@@ -4,7 +4,6 @@ import requests
 import datetime
 import asyncio
 import re
-import bs4
 import json
 
 class Bot(discord.Client):
