@@ -50,10 +50,6 @@ class Bot(discord.Client):
             "API": "http://api.zergpool.com:8080/api/currencies",
             "fn": lambda content: json.loads(content)["SAFE"]["hashrate"],
         },
-        "https://equihash.pro/": {
-            "API": "https://equihash.pro/api/stats",
-            "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
-        },
         "http://safe.raptorpool.org/": {
             "API": "http://safe.raptorpool.org/api/stats",
             "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
