@@ -1,3 +1,4 @@
+import websockets
 import discord
 import aiohttp
 import requests
