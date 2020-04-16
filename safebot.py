@@ -3,7 +3,6 @@ import aiohttp
 import requests
 import datetime
 import asyncio
-import re
 import json
 
 class Bot(discord.Client):
