@@ -1,9 +1,9 @@
 # SafeBot
-Discord Safecoin Bot
+Discord SafeCoin Bot
 
 Requires Python >= 3.6
 
-This bot uses discord.py rewrite library.
+This bot uses discord.py library.
 ```
 $ python3 -m pip install -r requirements.txt
 ```
