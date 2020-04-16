@@ -122,7 +122,8 @@ class Bot(discord.Client):
                         async with session.get(i["API"], timeout=10, verify_ssl=False) as response:
                             hashrate = float(i["fn"](await response.text()))
                     except:
-                        self.pools_stat[pool] = None
+                        if pool not in self.pools_stat:
+                            self.pools_stat[pool] = None
                     else:
                         self.pools_stat[pool] = hashrate
                 await session.close()
