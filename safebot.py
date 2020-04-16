@@ -58,6 +58,10 @@ class Bot(discord.Client):
             "API": "https://www.nlpool.nl/api/currencies",
             "fn": lambda content: float(json.loads(content)["SAFE"]["hashrate"]),
         },
+        "https://equihash.speedpool.top/": {
+            "API": "https://equihash.speedpool.top/api/stats",
+            "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
+        },
     }
     pools_stat = {}
     blocks = 0
