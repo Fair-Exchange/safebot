@@ -1,0 +1,21 @@
+version: '3'
+services:
+  bot:
+    build:
+      context: .
+      args:
+        TOKEN: TOKEN
+    image: safebot
+    depends_on:
+      - safecoin
+    restart: always
+  safecoin:
+    image: safecoin/safecoin
+    volumes:
+      - safecoin-data:/safecoin
+    entrypoint: ["docker-entrypoint.sh", "-rpcuser=user", "-rpcpassword=password", "-rpcallowip=0.0.0.0/0"]
+    restart: always
+    stop_grace_period: 2m
+
+volumes:
+  safecoin-data:
