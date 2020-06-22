@@ -55,6 +55,10 @@ class Bot(discord.Client):
             "API": "https://zeropool.io/api/stats",
             "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
         },
+        "https://zpool.ca/": {
+            "API": "https://www.zpool.ca/api/currencies",
+            "fn": lambda content: json.loads(content)["SAFE"]["hashrate"],
+        },
     }
     pools_stat = {}
     blocks = 0
