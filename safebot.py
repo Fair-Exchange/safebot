@@ -23,10 +23,6 @@ class Bot(discord.Client):
         "listnodes": "Get list of nodes associated with your account",
     }
     pools = {
-        "https://safe.coinblockers.com/": {
-            "API": "https://safe.coinblockers.com/api/stats",
-            "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
-        },
         "https://safecoin.equihub.pro/": {
             "API": "https://safecoin.equihub.pro/api/stats",
             "fn": lambda content: json.loads(content)["hashrate"],
