@@ -27,10 +27,6 @@ class Bot(discord.Client):
             "API": "https://safecoin.equihub.pro/api/stats",
             "fn": lambda content: json.loads(content)["hashrate"],
         },
-        "https://minermore.com/pool/SAFE/": {
-            "API": "https://minermore.com/api/status",
-            "fn": lambda content: float(json.loads(content)["SAFE"]["hashrate"]),
-        },
         "https://safe.solopool.org/": {
             "API": "https://safe.solopool.org/api/stats",
             "fn": lambda content: json.loads(content)["hashrate"],
