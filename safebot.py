@@ -24,7 +24,7 @@ class Bot(discord.Client):
     }
     pools = {
         "https://safecoin.equihub.pro/": {
-            "API": "https://safecoin.equihub.pro/api/stats",
+            "API": "https://safe.equihub.pro/api/stats",
             "fn": lambda content: json.loads(content)["hashrate"],
         },
         "https://safe.solopool.org/": {
