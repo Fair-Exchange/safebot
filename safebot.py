@@ -49,7 +49,7 @@ class Bot(discord.Client):
         },
         "https://equihash.speedpool.top/": {
             "API": "https://equihash.speedpool.top/api/stats",
-            "fn": lambda content: json.loads(content)["pools"]["safecoin"]["hashrate"]*2/10**6,
+            "fn": lambda content: (json.loads(content)["pools"]["safecoin"]["hashrate"]+json.loads(content)["pools"]["safecoin solo"]["hashrate"])*2/10**6,
         },
         "https://zeropool.io/": {
             "API": "https://zeropool.io/api/stats",
