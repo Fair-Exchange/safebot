@@ -5,10 +5,9 @@ services:
       context: .
       args:
         TOKEN: TOKEN
-    image: safebot
     depends_on:
       - safecoin
-    restart: always
+    restart: unless-stopped
   safecoin:
     image: safecoin/safecoin
     command: -rpcauth=user:password rpcallowip=0.0.0.0/0
