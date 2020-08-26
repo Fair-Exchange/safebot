@@ -11,10 +11,10 @@ services:
     restart: always
   safecoin:
     image: safecoin/safecoin
+    command: -rpcauth=user:password rpcallowip=0.0.0.0/0
     volumes:
       - safecoin-data:/safecoin
-    entrypoint: ["docker-entrypoint.sh", "-rpcuser=user", "-rpcpassword=password", "-rpcallowip=0.0.0.0/0"]
-    restart: always
+    restart: unless-stopped
     stop_grace_period: 2m
 
 volumes:
